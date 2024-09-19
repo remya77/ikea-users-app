@@ -31,12 +31,26 @@ function App() {
   }
 
   const deleteUser = async (e) => {
-    await fetch(`${hostUrl}api/users/${e.target.dataset.id}`, {
+    await fetch(`${hostUrl}api/user/${e.target.dataset.id}`, {
       method: "DELETE",
       headers: {
         "Content-type": "application/json",
       },
     });
+    await fetchUsers();
+  }
+
+  const updateUser = async(e)=>{
+    const response = await fetch(`${hostUrl}api/users/${e.target.dataset.id}`,
+    {
+      method:"PUT",
+      headers:{
+        "Content-type": "application/json",
+      },
+      body:JSON.stringify({isAdmin: e.target.isAdmin.checked, jobTitle:e.target.jobTitle.value}),
+
+    } );
+    await response.json();
     await fetchUsers();
   }
 
@@ -60,6 +74,7 @@ function App() {
             <th>Is Admin</th>
             <th>Job Title</th>
             <th>Delete</th>
+            <th>Update</th>
           </tr>
         </thead>
         <tbody>
@@ -74,6 +89,9 @@ function App() {
               <td>{user.jobTitle}</td>
               <td>
                 <button data-id={user.id} onClick={deleteUser}>Delete</button>
+              </td>
+              <td>
+                <button data-id={user.id} onClick={updateUser}>Update</button>
               </td>
             </tr>
           ))}
