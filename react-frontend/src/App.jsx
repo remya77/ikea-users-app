@@ -16,6 +16,20 @@ function App() {
     fetchUsers();
   }, []);
 
+  const createUser = async (e) => {
+    e.preventDefault()
+    const response = await fetch(`${hostUrl}api/users`, {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({ name: e.target.name.value, isAdmin: e.target.isAdmin.checked, jobTitle: e.target.jobTitle.value }),
+    });
+    const newUser = await response.json();
+
+    setUsers([...users, newUser]);
+  }
+
   const deleteUser = async (e) => {
     await fetch(`${hostUrl}api/users/${e.target.dataset.id}`, {
       method: "DELETE",
@@ -28,6 +42,16 @@ function App() {
 
   return (
     <>
+      <h1>New User</h1>
+      <form onSubmit={createUser}>
+        <label htmlFor="name">Name</label>
+        <input type="text" name="name" id="name" />
+        <label htmlFor="isAdmin">Is Admin</label>
+        <input type="checkbox" name="isAdmin" />
+        <label htmlFor="Job">Job</label>
+        <input type="text" name="jobTitle" id="jobTitle" />
+        <input type="submit" />
+      </form>
       <h1>Users</h1>
       <table>
         <thead>
@@ -35,6 +59,7 @@ function App() {
             <th>Name</th>
             <th>Is Admin</th>
             <th>Job Title</th>
+            <th>Delete</th>
           </tr>
         </thead>
         <tbody>
@@ -47,6 +72,9 @@ function App() {
                   type="checkbox"
                   checked={user.isAdmin} /></td>
               <td>{user.jobTitle}</td>
+              <td>
+                <button data-id={user.id} onClick={deleteUser}>Delete</button>
+              </td>
             </tr>
           ))}
         </tbody>
