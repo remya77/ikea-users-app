@@ -1,10 +1,12 @@
-import { useEffect, useState } from 'react';
 import './App.css';
+import { useEffect, useState } from 'react';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+
 
 function App() {
   const [users, setUsers] = useState([]);
-  const hostUrl = import.meta.env.PROD ?
-    window.location.href : "http://localhost:8080/";
+  const hostUrl = "http://localhost:8080/";
 
   const fetchUsers = async () => {
     const response = await fetch(`${hostUrl}api/users`);
@@ -40,16 +42,18 @@ function App() {
     await fetchUsers();
   }
 
-  const updateUser = async(e)=>{
+  const updateUser = async (e) => {
+    console.log(e)
     const response = await fetch(`${hostUrl}api/users/${e.target.dataset.id}`,
-    {
-      method:"PUT",
-      headers:{
-        "Content-type": "application/json",
-      },
-      body:JSON.stringify({isAdmin: e.target.isAdmin.checked, jobTitle:e.target.jobTitle.value}),
+      {
+        method: "PUT",
+        headers: {
+          "Content-type": "application/json",
+        },
 
-    } );
+        body: JSON.stringify({ isAdmin: document.getElementById("isAdminEdit").value.checked, jobTitle: document.getElementById("jobTitleEdit").value })
+
+      });
     await response.json();
     await fetchUsers();
   }
@@ -59,7 +63,7 @@ function App() {
       <h1>New User</h1>
       <form onSubmit={createUser}>
         <label htmlFor="name">Name</label>
-        <input type="text" name="name" id="name" />
+        <input type="text" name="name" id="name" title="name"/>
         <label htmlFor="isAdmin">Is Admin</label>
         <input type="checkbox" name="isAdmin" />
         <label htmlFor="Job">Job</label>
@@ -80,15 +84,20 @@ function App() {
         <tbody>
           {users.map((user) => (
             <tr key={user.id}>
-              <td>{user.name}</td>
+              <td><TextField variant="standard" label="Username" value={user.name} ></TextField> </td>
               <td>
                 <input
                   data-id={user.id}
                   type="checkbox"
-                  checked={user.isAdmin} /></td>
-              <td>{user.jobTitle}</td>
+                  id="isAdminEdit"
+                  defaultChecked={user.isAdmin}
+                  
+                /></td>
               <td>
-                <button data-id={user.id} onClick={deleteUser}>Delete</button>
+                <input data-id={user.id} type="text" name="jobTitleEdit" id="jobTitleEdit" defaultValue={user.jobTitle}  />
+              </td>
+              <td>
+                <Button variant="contained" data-id={user.id} onClick={deleteUser}>Delete</Button>
               </td>
               <td>
                 <button data-id={user.id} onClick={updateUser}>Update</button>

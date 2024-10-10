@@ -81,8 +81,10 @@ app.delete('/api/user/:id', async(req,res)=>{
 
 // This tells the express application to listen for requests on port 8080
 const port = process.env.PORT || 8080;
-app.listen(port, async () => {
+server = app.listen(port, async () => {
     console.log(`Server started at ${port}`);
 });
+
+module.exports = {app, server}
 
 
